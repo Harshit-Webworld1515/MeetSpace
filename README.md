@@ -35,4 +35,4 @@ Setup instructions will be added soon.
 
 ## Author
 
-Harshit
+Harshit pandit
