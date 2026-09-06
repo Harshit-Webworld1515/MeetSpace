@@ -26,7 +26,6 @@ const startServer = async () => {
   const connectionDb = await mongoose.connect(process.env.MONGODB_URI);
   console.log(`Connected to MongoDB Atlas Host: ${connectionDb.connection.host}`);
 
-  
   server.listen(app.get("port"), () => {
     console.log(`Server is running on port ${app.get("port")}`);
   });
