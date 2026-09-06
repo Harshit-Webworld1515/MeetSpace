@@ -5,6 +5,7 @@ import { Server } from "socket.io";
 import { createServer } from "node:http";
 import cors from "cors";
 import { connectToSocket } from "./controllers/socketManager.js";
+import "dotenv/config";
 
 const server = createServer(app);
 //creating the socket server by passing the http server instance to it
@@ -12,7 +13,7 @@ const server = createServer(app);
 const io = connectToSocket(server);
 
 app.use(cors());
-app.use(express.json({limit: "40kb"}));
+app.use(express.json({ limit: "40kb" }));
 app.use(express.urlencoded({ extended: true, limit: "40kb" }));
 
 app.set("port", process.env.PORT || 8080);
@@ -22,9 +23,10 @@ app.get("/", (req, res) => {
 });
 
 const startServer = async () => {
-  const connectionDb = await mongoose.connect("mongodb+srv://nationfirst1515_db_user:dGYJpIySHE4vRkhs@cluster0.amscjhw.mongodb.net");
+  const connectionDb = await mongoose.connect(process.env.MONGODB_URI);
   console.log(`Connected to MongoDB Atlas Host: ${connectionDb.connection.host}`);
 
+  
   server.listen(app.get("port"), () => {
     console.log(`Server is running on port ${app.get("port")}`);
   });
