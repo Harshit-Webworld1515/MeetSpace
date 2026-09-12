@@ -41,7 +41,7 @@ export const connectToSocket = (server) => {
             io.to(toId).emit("signal", socket.id, message);
         });
         socket.on("chat_message", (room, message) => {
-            // Handle chat message
+            // chat_message event ke saath room aur message data bheja gaya hai
             const [matchingRoom, found] = Object.entries(connection)
                 .reduce(([room, isFound], [roomKey, roomValue]) => {
                     if (!isFound && roomValue.includes(socket.id)) {
@@ -49,19 +49,48 @@ export const connectToSocket = (server) => {
                     }
                     return [room, isFound];
                 }, ["", false]);
-                if (found) {
-                    if (messages[matchingRoom] === undefined) {
-                        messages[matchingRoom] = [];
-                    }
-                    messages[matchingRoom].push({
-                        data: data,
-                        sender: sender,
-                        'socket-id-sender': socket.id
-                    });
+            if (found) {
+                if (messages[matchingRoom] === undefined) {
+                    messages[matchingRoom] = [];
                 }
+                messages[matchingRoom].push({
+                    data: data,
+                    sender: sender,
+                    'socket-id-sender': socket.id
+                });
+                console.log("Message from " + socket.id + " in room " + matchingRoom + ": " + message);
+                // Broadcast the message to all users in the room except the sender
+                connection[matchingRoom].forEach((userId) => {
+                    if (userId !== socket.id) {
+                        io.to(userId).emit("chat_message", message, sender, socket.id);
+                    }
+                });
+            }
         });
         socket.on("disconnect", () => {
-            console.log("A user disconnected: " + socket.id);
+            //Abhi current time aur user ke online hone ke time ke beech kitna time difference hai, milliseconds mein nikaala
+            var diffTime = Math.abs(new Date().getTime() - timeOnline[socket.id]);
+            console.log("User " + socket.id + " was online for " + diffTime + " milliseconds.");
+            var key
+            for (const [k, v] of JSON.parse(JSON.stringify(Object.entries(connection)))) {
+                for (let a = 0; a < v.length; ++a) {
+                    if (v[a] === socket.id) {
+                        key = k;
+                        for (let a = 0; a < connection[key].length; ++a) {
+                            // connection[key][a]==v[a];
+                            if (v[a] !== socket.id) {
+                                io.to(v[a]).emit("user_left", socket.id, diffTime);
+                            }
+                        }
+                        var index = connection[key].indexOf(socket.id);
+                        connection[key].splice(index, 1);//User ko room se remove kar diya
+                        if (connection[key].length === 0) {
+                            delete connection[key];
+                            delete messages[key];
+                        }
+                    }
+                }
+            }
         });
     });
     return io;
