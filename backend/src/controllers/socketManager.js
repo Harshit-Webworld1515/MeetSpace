@@ -4,7 +4,14 @@ let connection = {};
 let messages = {};
 let timeOnline = {};
 export const connectToSocket = (server) => {
-    const io = new Server(server);
+    const io = new Server(server , {
+        cors: {//allowing all origins, methods,and headers for development purposes
+            origin: "*",
+            methods: ["GET", "POST"],
+            allowedHeaders: ["*"],
+            credentials: true
+        },//not recommended for production restrict to enhance security, but for development it is fine
+    });
 
     io.on("connection", (socket) => {
         console.log("A user connected: " + socket.id);
@@ -34,13 +41,12 @@ export const connectToSocket = (server) => {
                     );//New user ko ye purana chat message bhejo:
                 }
             }
-            socket.join(path);//User/socket path ke room me enter
         });
         socket.on("signal", (toId, message) => {
             // Handle signal data
             io.to(toId).emit("signal", socket.id, message);
         });
-        socket.on("chat_message", (room, message) => {
+        socket.on("chat_message", (data, sender) => {
             // chat_message event ke saath room aur message data bheja gaya hai
             const [matchingRoom, found] = Object.entries(connection)
                 .reduce(([room, isFound], [roomKey, roomValue]) => {
@@ -58,11 +64,11 @@ export const connectToSocket = (server) => {
                     sender: sender,
                     'socket-id-sender': socket.id
                 });
-                console.log("Message from " + socket.id + " in room " + matchingRoom + ": " + message);
+                console.log("Message from " + socket.id + " in room " + matchingRoom + ": " + data);
                 // Broadcast the message to all users in the room except the sender
                 connection[matchingRoom].forEach((userId) => {
                     if (userId !== socket.id) {
-                        io.to(userId).emit("chat_message", message, sender, socket.id);
+                        io.to(userId).emit("chat_message", data, sender, socket.id);
                     }
                 });
             }
@@ -96,3 +102,13 @@ export const connectToSocket = (server) => {
     return io;
 }
 // export default connectToSocket;
+
+// Backend Socket.IO ka kaam:
+// Users ke beech real-time messages/events ko receive, manage aur forward karna
+
+// Object.entries(connection)
+// Ye object ko array of [key, value] mein convert karta hai[
+//     ["roomA", ["AAA", "BBB"]],
+//     ["roomB", ["CCC", "DDD"]],
+//     ["roomC", ["EEE", "FFF"]]
+// ]

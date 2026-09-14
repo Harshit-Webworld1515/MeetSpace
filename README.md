@@ -1,10 +1,10 @@
 # MeetSpace
 
-A full-stack video conferencing web application.
+A full-stack real-time video conferencing web application.
 
 ## Project Status
 
-🚧 Currently under development.
+🚧 Currently under development.Wait... New project is loading🔃
 
 ## Tech Stack
 
@@ -19,8 +19,8 @@ A full-stack video conferencing web application.
 
 ```text
 MeetSpace/
-├── client/
-├── server/
+├── frontend/
+├── backend/
 ├── .gitignore
 └── README.md
 ```
