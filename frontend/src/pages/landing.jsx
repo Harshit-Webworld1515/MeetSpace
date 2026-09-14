@@ -23,7 +23,7 @@ export default function LandingPage() {
             Join our community and connect with your loved ones, no matter the distance, through MeetSpace.
           </p>
           <div role='button' >
-            <Link to={"/home"}>Get Started</Link>
+            <Link to={"/auth"}>Get Started</Link>
           </div>
         </div>
         <div>

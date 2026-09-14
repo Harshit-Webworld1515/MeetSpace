@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Routes, Route,Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import LandingPage from './pages/landing'
+import {Authentication} from './pages/authentication'
 import './App.css'
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
 
       <Routes>
         <Route path='/' element={<LandingPage />} />
+        <Route path='/auth' element={<Authentication />} />
       </Routes>
 
     </Router>
