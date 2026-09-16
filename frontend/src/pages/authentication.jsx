@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from "@mui/material/Button";
@@ -13,6 +12,9 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { AuthContext } from "../contexts/AuthContext.jsx";
+import { Snackbar } from '@mui/material';
+
 
 // TODO remove, this demo shouldn't need to reset the theme.
 
@@ -23,27 +25,50 @@ export function Authentication() {
     const [password, setPassword] = React.useState();
     const [name, setName] = React.useState();
     const [error, setError] = React.useState();
-    const [messages, setMessages] = React.useState();
+    const [message, setMessage] = React.useState();
     const [open, setOpen] = React.useState(false);
     const [formState, setFormState] = React.useState(0); // 'login' or 'register'
+
+    const { handleRegister, handleLogin } = React.useContext(AuthContext)
+
+    let handleAuth = async () => {
+        try {
+            if (formState === 0) {//login
+                let result= await handleLogin(username,password);
+                
+
+            }
+            if (formState === 1) {//sign in
+                let result = await handleRegister(name, username, password)
+                console.log(result);
+                setMessage(result);
+                setOpen(true);
+                setError("");
+                setFormState(0);
+                setPassword("");
+                setUsername("");
+            }
+        } catch (err) {
+            console.log(err)
+            let message = (err.response.data.message);
+            setError(message);
+        }
+    }
+
     return (
         <ThemeProvider theme={defaultTheme}>
             <Grid container component="main" sx={{ height: '100vh' }}>
                 <CssBaseline />
                 <Grid
-                    item
-                    xs={false}
-                    sm={4}
-                    md={7}
+                    size={{ xs: 0, sm: 4, md: 7 }}
                     sx={{
-                        backgroundImage: 'url("https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=1200&q=80")', backgroundRepeat: 'no-repeat',
-                        backgroundColor: (t) =>
+                        backgroundImage: 'url("https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?auto=format&fit=crop&w=1600&q=80")', backgroundColor: (t) =>
                             t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                     }}
                 />
-                <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+                <Grid size={{ xs: 12, sm: 8, md: 5 }} component={Paper} elevation={6} square>
                     <Box
                         sx={{
                             my: 8,
@@ -71,9 +96,7 @@ export function Authentication() {
                                 Sign Up
                             </Button>
                         </div>
-                        <Typography component="h1" variant="h5">
-                            Sign in
-                        </Typography>
+                        
                         <Box component="form" noValidate sx={{ mt: 1 }}>
                             {formState === 1 ? <TextField
 
@@ -82,7 +105,8 @@ export function Authentication() {
                                 fullWidth
                                 id="fullname"
                                 label="Full Name"
-                                name="fullname"
+                                name="name"
+                                value={name}
                                 autoFocus
                                 onChange={(e) => setName(e.target.value)}
                             /> : <></>}
@@ -93,6 +117,7 @@ export function Authentication() {
                                 id="username"
                                 label="Username"
                                 name="username"
+                                value={username}
                                 autoFocus
                                 onChange={(e) => setUsername(e.target.value)}
 
@@ -104,25 +129,31 @@ export function Authentication() {
                                 name="password"
                                 label="Password"
                                 type="password"
+                                value={password}
                                 id="password"
                                 onChange={(e) => setPassword(e.target.value)}
                             />
-                            <FormControlLabel
-                                control={<Checkbox value="remember" color="primary" />}
-                                label="Remember me"
-                            />
+                            <p style={{color:"red"}}>{error}</p>
                             <Button
                                 type="button"
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
+                                onClick={handleAuth}
                             >
-                                Sign In
+                                {formState===0?'login':"Register"}
                             </Button>
                         </Box>
                     </Box>
                 </Grid>
             </Grid>
+
+            <Snackbar
+                open={open}
+                autoHideDuration={4000}
+                message={message}
+
+            />
         </ThemeProvider>
     );
 }
