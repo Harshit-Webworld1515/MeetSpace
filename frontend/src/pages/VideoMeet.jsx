@@ -97,19 +97,114 @@ export default function VideoMeetComponent() {
   }
   useEffect(() => {
     getPermission();
-
-
   }, [])
+  let getUserMediaSucess = (stream) => {
+    try {
+      // Purane stream ke saare tracks stop karo
+      window.localStream.getTracks().forEach(track => track.stop());
+    } catch (error) {
+      console.log(error)
+    }
+    // Naye camera/mic stream ko current local stream banao
+    window.localStream = stream
+    // Apna camera video local video element mein dikhao
+    localVideoRef.current.srcObject = stream;
+    // Har existing peer connection ke saath naya local stream share karo
+    for (const id in connection) {
+      if (id === socketIdRef.current) continue;
+      connection[id].addStream(window.localStream)
+      // Stream add hone ke baad remote user ke liye SDP Offer banao
+      connection[id].createOffer().then((description) => {
+        console.log(description);
+        // Offer ko local PeerConnection ka local description set karo
+        connection[id].setLocalDescription(description)
+          .then(() => {
+            // SDP Offer ko Socket.IO signaling ke through remote user ko bhejo
+            socketIdRef.current.emit("signal", id, JSON.stringify({
+              "sdp": connection[id].localDescription
+            }))
+          })
+          .catch(e => console.log(e))
+      })
+    }
+    // Stream ke har track ke end hone par ye function chalega
+    stream.getTracks().forEach(track => track.onended = () => {
+      // UI/state mein audio aur video ko OFF karo
+      setAudio(false);
+      setVideo(false);
+      try {
+        // Current local stream ke saare tracks stop karo
+        let tracks = localVideoRef.current.srcObject.getTracks()
+        tracks.forEach(track => track.stop())
+      } catch (error) {
+        console.log(error);
+      }
 
-  let getUserMediaSucess = () => {
+      // Camera ke badle black video aur mic ke badle silent audio stream banao
+      let blackSilence = (...args) => new MediaStream([black(...args), silence()])
+      // Black + silent stream ko current local stream banao
+      window.localStream = blackSilence;
+      // Local video element mein replacement stream dikhao
+      localVideoRef.current.srcObject = window.localStream;
+      // Replacement stream ko sabhi peer connections mein add karo
+      for (const id in connection) {
+        connection[id].addStream(window.localStream)
+        // Replacement stream ke liye naya SDP Offer banao
+        connection[id].createOffer().then((description) => {
 
+          // New Offer ko local description set karo
+          connection[id].setLocalDescription(description)
+            .then(() => {
+              // Updated SDP ko remote user ko signaling ke through bhejo
+              socketRef.current.emit("signal", id, JSON.stringify({
+                "sdp": connection[id].localDescription
+              }))
+            })
+            .catch(e => console.log(e))
+        })
+
+      }
+    });
+  }
+  // Fake silent audio track create karta hai
+  let silence = () => {
+    // Browser ka audio processing context create karo
+    let ctx = new AudioContext()
+    // Audio signal generate karne ke liye oscillator banao
+    let oscillator = ctx.createOscillator()
+    // Audio ko MediaStream ke form mein output karo
+    let dst = oscillator.connect(ctx.createMediaStreamDestination())
+    // Oscillator start karo
+    oscillator.start()
+    // AudioContext ko active karo
+    ctx.resume()
+    // Audio track ko disable karke silent track return karo
+    return Object.assign(dst.stream.getAudioTracks()[0], { enabled: false })
+  }
+  // Fake black video track create karta hai
+  let black = ({
+    width = 640,
+    height = 480
+  } = {}) => {
+    // Black video ke liye canvas create karo
+    let canvas = Object.assign(
+      document.createElement("canvas"),
+      { width, height }
+    );
+    // Canvas ko black color se fill karo
+    canvas.getContext('2d').fillRect(0, 0, width, height);
+    // Canvas ki output ko MediaStream mein convert karo
+    let stream = canvas.captureStream();
+
+    // Video track ko disable karke return karo
+    return Object.assign(stream.getVideoTracks()[0], { enabled: false })
   }
   // User ke camera/mic ON/OFF state ke according naya stream lena ya tracks stop karna
   let getUserMedia = () => {
     if ((video && videoAvailable) || (audio && audioAvailable)) {
       navigator.mediaDevices.getUserMedia({ video: video, audio: audio })
-        .then(getUserMediaSucess) // TODO: getUserMediaSucess
-        .then((stream) => {})
+        .then(getUserMediaSucess)
+        .then((stream) => { })
         .catch((error) => console.log(error))
     } else {
       try {
@@ -127,8 +222,54 @@ export default function VideoMeetComponent() {
     }
   }, [audio, video])
 
-  let gotMessageFromServer = (formId, message) => {
+  let gotMessageFromServer = (fromId, message) => {
 
+    // 1. String ko JS object banao
+    var signal = JSON.parse(message);
+    // 2. Apne hi signal ko ignore karo
+    if (fromId !== socketIdRef.current) {
+      // 3. Agar SDP mila
+      if (signal.sdp) {
+
+        // a456 (new user) se aaya SDP,
+        // b456 (existing user) ki connection mein remote description set karo.
+        connection[fromId]
+          .setRemoteDescription(
+            new RTCSessionDescription(signal.sdp)
+          )
+          .then(() => {
+            // 5. Agar received SDP offer hai
+            if (signal.sdp.type === 'offer') {
+              // 6. Us offer ka answer banao
+              connection[fromId]
+                .createAnswer()
+                .then((description) => {
+                  // 7. Apne answer ko local description banao
+                  connection[fromId]
+                    .setLocalDescription(description)
+                    .then(() => {
+                      // 8. Answer sender ko wapas bhejo
+                      socketRef.current.emit(
+                        "signal",
+                        fromId,
+                        JSON.stringify({
+                          sdp: connection[fromId].localDescription
+                        })
+                      );
+                    });
+                });
+            }
+          });
+      }
+      // 9. Agar ICE candidate mila//a456 = New User b456 = Existing User
+      if (signal.ice) {// a456 → b456 ko ICE Candidate bhejta hai
+        // a456 se mila ICE candidate, uski connection mein add karo.
+        connection[fromId]
+          .addIceCandidate(
+            new RTCIceCandidate(signal.ice)
+          );
+      }
+    }
   }
 
   let connectToSocketServer = () => {
@@ -139,6 +280,8 @@ export default function VideoMeetComponent() {
     let addMessage = () => {
 
     }
+    //note:New user (a456) ne existing user (b456) ko signal bheja.
+    // Ab b456 ke browser perspective se sender = a456 (fromId).
     socketRef.current.on('signal', gotMessageFromServer);
     socketRef.current.on("connect", () => {
       //current webpage ke URL ki information deta h--👇
@@ -200,7 +343,9 @@ export default function VideoMeetComponent() {
             connection[socketListId].addStream(window.localStream);
           } else {
             // TODO BLACKSILENCE
-            let blackSlience
+            let blackSilence = (...args) => new MediaStream([black(...args), silence()])
+            window.localStream = blackSilence;
+            connection[socketListId].addStream(window.localStream)
           }
         })
         if (id === socketIdRef.current) {
@@ -213,7 +358,7 @@ export default function VideoMeetComponent() {
               //Agar stream add karte waqt issue aaye, to connection ka local description bana setting karke SDP signaling ke through doosre user ko bhejo.
               connection[id2].setLocalDescription(description)
                 .then(() => {
-                  socketRef.current.emit("signal", id2, JSON.stringify({ "sdp": connection[id2].localDescription })
+                  socketRef.current.emit("signal", id2, JSON.stringify({ "sdp": connection[id2].localDescription })//{    type: "offer",    sdp: "v=0\r\n..."}
                   )
                 }
                 )
