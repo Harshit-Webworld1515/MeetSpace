@@ -25,10 +25,9 @@ export const connectToSocket = (server) => {
             console.log("User " + socket.id + " joined room: " + path);
 
             for (let a = 0; a < connection[path].length; a++) {
-                if (connection[path][a] !== socket.id) {
                     // Notify other users in the room about the new user
                     io.to(connection[path][a]).emit("new_user_joined", socket.id, connection[path]);//new user ka id aur room me already present users ka list bhej diya
-                }
+                
             }
             if (messages[path] !== undefined) {
 
@@ -85,7 +84,7 @@ export const connectToSocket = (server) => {
                         for (let a = 0; a < connection[key].length; ++a) {
                             // connection[key][a]==v[a];
                             if (v[a] !== socket.id) {
-                                io.to(v[a]).emit("user_left", socket.id, diffTime);
+                                io.to(v[a]).emit("user_left", socket.id);
                             }
                         }
                         var index = connection[key].indexOf(socket.id);
