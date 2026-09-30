@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
-import '../styles/videoComponent.css'
 import { Badge, IconButton, Button, TextField } from '@mui/material';
 import { Await } from 'react-router-dom';
 import io from "socket.io-client";
+import styles from "../styles/videoComponent.module.css";
 
 
 const server_url = "http://localhost:8080";
@@ -120,7 +120,7 @@ export default function VideoMeetComponent() {
         connection[id].setLocalDescription(description)
           .then(() => {
             // SDP Offer ko Socket.IO signaling ke through remote user ko bhejo
-            socketIdRef.current.emit("signal", id, JSON.stringify({
+            socketRef.current.emit("signal", id, JSON.stringify({
               "sdp": connection[id].localDescription
             }))
           })
@@ -143,7 +143,7 @@ export default function VideoMeetComponent() {
       // Camera ke badle black video aur mic ke badle silent audio stream banao
       let blackSilence = (...args) => new MediaStream([black(...args), silence()])
       // Black + silent stream ko current local stream banao
-      window.localStream = blackSilence;
+      window.localStream = blackSilence();
       // Local video element mein replacement stream dikhao
       localVideoRef.current.srcObject = window.localStream;
       // Replacement stream ko sabhi peer connections mein add karo
@@ -273,6 +273,7 @@ export default function VideoMeetComponent() {
   }
 
   let connectToSocketServer = () => {
+    console.log("🔥 CONNECTING TO SOCKET SERVER");
     socketRef.current = io.connect(server_url, {//Socket ko React ref ke current mein store kar diya.
       secure: false
     })//client ko Socket.IO server se connect karta hai.
@@ -284,20 +285,26 @@ export default function VideoMeetComponent() {
     // Ab b456 ke browser perspective se sender = a456 (fromId).
     socketRef.current.on('signal', gotMessageFromServer);
     socketRef.current.on("connect", () => {
+      console.log("🔥 SOCKET CONNECTED:", socketRef.current.id);
       //current webpage ke URL ki information deta h--👇
+      console.log("🔥 JOIN CALL EMIT:", window.location.href);
       socketRef.current.emit("join_call", window.location.href)
       socketIdRef.current = socketRef.current.id//socketIdRef.current =undefine thi pehle
       socketRef.current.on("chat_message", addMessage)
 
       socketRef.current.on("user_left", (id) => {
-        setVideo((videos) => {
-          videos.filter((video) => {
-            video.socketId !== id
-          })
-        })
-      })
+        setVideos((videos) => {
+          return videos.filter((video) => {
+            return video.socketId !== id;
+          });
+        });
+      });
       socketRef.current.on("new_user_joined", (id, clients) => {
 
+        console.log("🔥 NEW USER JOINED");
+        console.log("id:", id);
+        console.log("my socket:", socketIdRef.current);
+        console.log("clients:", clients);
         clients.forEach((socketListId) => {
           connection[socketListId] = new RTCPeerConnection(peerConfigConnections)//maintain a separate RTCPeerConnection for each remote participant
           connection[socketListId].onicecandidate = (event) => {
@@ -307,13 +314,14 @@ export default function VideoMeetComponent() {
           }
           // Remote user ki stream jab mujhe receive ho, tab mujhe bata dena
           connection[socketListId].onaddstream = (event) => {
+            console.log("🔥 ONADDSTREAM RUNNING");
             let videoExists = videoRef.current.find(video => video.
               socketId === socketListId);
             //"Video references ki array mein jao, har video ko 
             // dekho, jiska socketId hamare socketListId ke equal
             // ho, us video object ko mujhe de do."
             if (videoExists) {
-              setVideo(videos => {
+              setVideos(videos => {
                 const updatedVideos = videos.map(video =>
                   video.socketId === socketListId ? { ...video, stream: event.stream } : video
                 );
@@ -331,7 +339,7 @@ export default function VideoMeetComponent() {
                 playsinline: true
               }
               setVideos(videos => {
-                const updatedVideos = { ...videos, newVideo };
+                const updatedVideos = [...videos, newVideo];
                 videoRef.current = updatedVideos;
                 return updatedVideos;
               })
@@ -344,26 +352,27 @@ export default function VideoMeetComponent() {
           } else {
             // TODO BLACKSILENCE
             let blackSilence = (...args) => new MediaStream([black(...args), silence()])
-            window.localStream = blackSilence;
+            window.localStream = blackSilence()
             connection[socketListId].addStream(window.localStream)
           }
         })
         if (id === socketIdRef.current) {
-          for (const id2 in connection) {
+          for (let id2 in connection) {
             if (id2 === socketIdRef.current) continue;//connection mera khud ka hai → skip.
             try {
               //Har remote user ke WebRTC connection mein meri local camera/mic stream daal do.”
               connection[id2].addStream(window.localStream);
-            } catch (e) {
-              //Agar stream add karte waqt issue aaye, to connection ka local description bana setting karke SDP signaling ke through doosre user ko bhejo.
+            } catch (e) { }
+            //Agar stream add karte waqt issue aaye, to connection ka local description bana setting karke SDP signaling ke through doosre user ko bhejo.
+            console.log("🔥 CREATING OFFER FOR:", id2);
+            connection[id2].createOffer().then((description) => {
               connection[id2].setLocalDescription(description)
                 .then(() => {
                   socketRef.current.emit("signal", id2, JSON.stringify({ "sdp": connection[id2].localDescription })//{    type: "offer",    sdp: "v=0\r\n..."}
                   )
-                }
-                )
+                })
                 .catch(e => console.log(e));
-            }
+            })
           }
         }
       })
@@ -371,27 +380,56 @@ export default function VideoMeetComponent() {
   }
 
   let getMedia = () => {
+    console.log("🔥 GET MEDIA CALLED");
     setVideo(videoAvailable);
     setAudio(audioAvailable);
     connectToSocketServer();
   }
   let connect = () => {
+    console.log("🔥 CONNECT BUTTON CLICKED");
     setAskForUsername(false);
     getMedia();
   }
 
+  console.log("🔥 VIDEOMEET COMPONENT RENDERED");
   return (
     <div>
       {
         askForUsername === true ?
           <div>
             <h2>Enter into lobby</h2>
-            <TextField id="outlined-basic" label="Username" sx={{ bgcolor: 'background.paper' }} value={username} onChange={e => setUsername(e.target.value)} variant="outlined" />
+            <TextField id="outlined-basic" label="Username" value={username} onChange={e => setUsername(e.target.value)} variant="outlined" />
             <Button variant="contained" onClick={connect}>Connect</Button>
             <div>
               <video ref={localVideoRef} autoPlay muted> </video>
             </div>
-          </div> : <></>
+          </div> :
+           <div className='styles.meetVideoContainer'>
+            <video className='styles.meetUserVideo' ref={localVideoRef} autoPlay muted></video>
+
+            {
+              videos.map((video) => (
+
+                <div key={video.socketId}>
+                  <h2>{video.socketId}</h2>
+                  <video data-socket={video.socketId}
+                    ref={ref => {
+                      if (ref && video.stream) {
+                        ref.srcObject = video.stream;
+                      }
+                    }}
+                    autoPlay
+                  >
+
+                  </video>
+
+
+                </div>
+
+
+              ))
+            }
+          </div>
 
       }
 

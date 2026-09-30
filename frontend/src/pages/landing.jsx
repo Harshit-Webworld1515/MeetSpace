@@ -18,7 +18,7 @@ export default function LandingPage() {
       </nav>
       <div className="landingMainContainer">
         <div>
-          <h1><span style={{ color: "#ff9839" }}>Connect</span> with your Loved ones</h1>
+          <h1 style={{color:"#fff"}}><span style={{ color: "#ff9839" }}>Connect</span> with your Loved ones</h1>
           <p>
             Join our community and connect with your loved ones, no matter the distance, through MeetSpace.
           </p>
