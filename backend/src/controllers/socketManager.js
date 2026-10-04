@@ -66,9 +66,7 @@ export const connectToSocket = (server) => {
                 console.log("Message from " + socket.id + " in room " + matchingRoom + ": " + data);
                 // Broadcast the message to all users in the room except the sender
                 connection[matchingRoom].forEach((userId) => {
-                    if (userId !== socket.id) {
                         io.to(userId).emit("chat_message", data, sender, socket.id);
-                    }
                 });
             }
         });
