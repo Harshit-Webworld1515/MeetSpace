@@ -8,7 +8,7 @@
     bottom:10vh;
     height: 20vh;
     width: auto;
-    right: 0;
+    left: 0;
     border-radius: 20px;
 
 
@@ -32,4 +32,24 @@ font-size: 2rem;
     height: 30vh;
     min-width: 30vw;
     border-radius: 10px;
+}
+.chatRoom{
+    position: absolute;
+    right: 0;
+    width: 30vw;
+    height: 90vh;
+    background-color: white;
+    border-radius: 10px;
+    padding-inline: 20px;
+}
+.chatContainer{
+    position: relative;
+    height: 100%;
+}
+.chattingArea{
+    position: absolute;
+    bottom: 0;
+}
+.chatmessage{
+    margin: 10px 0;
 }
