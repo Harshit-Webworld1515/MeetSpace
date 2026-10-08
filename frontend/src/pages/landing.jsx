@@ -1,7 +1,9 @@
 import '../app.css'
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
+
 
 export default function LandingPage() {
+  let routeTo =  useNavigate();
   return (
     <div className='landingPageContainer'>
       <nav>
@@ -9,16 +11,22 @@ export default function LandingPage() {
           <h2>MeetSpace</h2>
         </div>
         <div className='navlist'>
-          <p>join as guest</p>
-          <p>Register</p>
-          <div role='button'>
+          <p onClick={()=>{
+            routeTo("/randomnew") 
+          }}>join as guest</p>
+          <p onClick={()=>{
+            routeTo("/auth")
+          }}>Register</p>
+          <div onClick={()=>{
+            routeTo("/auth")
+          }} role='button'>
             <p>login</p>
           </div>
         </div>
       </nav>
       <div className="landingMainContainer">
         <div>
-          <h1 style={{color:"#fff"}}><span style={{ color: "#ff9839" }}>Connect</span> with your Loved ones</h1>
+          <h1 style={{color:"#fff",margin:"32px 0"}} ><span style={{ color: "#ff9839" }}>Connect</span> with your Loved ones</h1>
           <p>
             Join our community and connect with your loved ones, no matter the distance, through MeetSpace.
           </p>
