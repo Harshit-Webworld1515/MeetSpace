@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }) => {
             })
             if (request.status === httpStatus.OK) {
                 localStorage.setItem("token", request.data.token)
-
+                navigate("/home")
             }
         } catch (error) {
             throw error;
@@ -46,9 +46,32 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-
+    const getHistoryOfUser = async () => {
+        try {
+            let request = await client.get("/get_all_activity", {
+                params: {
+                    token: localStorage.getItem("token")
+                }
+            });
+            return request.data.meetings;
+        } catch
+        (err) {
+            throw err;
+        }
+    }
+    const addToUserHistory = async (meetingCode) => {
+        try {
+            let request = await client.post("/add_to_activity", {
+                token: localStorage.getItem("token"),
+                meeting_code: meetingCode
+            });
+            return request.data
+        }catch (err) {
+            throw err;
+        }
+    } 
     const data = {
-        userData, setUserData, handleRegister,handleLogin
+        userData, setUserData, handleRegister, handleLogin, getHistoryOfUser, addToUserHistory
     }
     return (
         <AuthContext.Provider value={data}>
@@ -63,7 +86,7 @@ export const AuthProvider = ({ children }) => {
 // Maine frontend mein Authentication ke liye Context API aur
 // Axios ka systematic setup banaya hai. Context API ki help
 // se  authentication-related data aur functions ko different
-// components mein easily share kar sakta hoon,authcontext 
+// components mein easily share kar sakta hoon,authcontext
 // se authentication component le rha
 //  aur Axios ki help  se frontend se backend APIs ko
 //    HTTP requests bhej  sakta hoon.
