@@ -7,6 +7,7 @@ import MicOffIcon from '@mui/icons-material/MicOff'
 import CallEndIcon from '@mui/icons-material/CallEnd'
 import ScreenShareIcon from '@mui/icons-material/ScreenShare';
 import ChatIcon from '@mui/icons-material/Chat'
+import { useNavigate } from "react-router-dom";
 
 import StopScreenShareIcon from '@mui/icons-material/StopScreenShare'
 
@@ -46,11 +47,11 @@ export default function VideoMeetComponent() {
 
 
   // Modal
-  let [showModal, setShowModal] = useState();
+  let [showModal, setShowModal] = useState(true);
 
 
   // Chat
-  let [message, setMessage] = useState();       // Current message
+  let [message, setMessage] = useState("");       // Current message
   let [newMessages, setNewMessages] = useState(3); // New message count
   let [messages, setMessages] = useState([]);   // All messages
 
@@ -67,6 +68,8 @@ export default function VideoMeetComponent() {
   // if (isChrome()===false) {
 
   // }
+
+  let routeTo = useNavigate();
   const getPermission = async () => {
 
     try {
@@ -274,10 +277,12 @@ export default function VideoMeetComponent() {
       // 9. Agar ICE candidate mila//a456 = New User b456 = Existing User
       if (signal.ice) {// a456 → b456 ko ICE Candidate bhejta hai
         // a456 se mila ICE candidate, uski connection mein add karo.
-        connection[fromId]
-          .addIceCandidate(
-            new RTCIceCandidate(signal.ice)
-          );
+        if (connection[fromId].remoteDescription) {
+          connection[fromId]
+            .addIceCandidate(
+              new RTCIceCandidate(signal.ice)
+            );
+        }
       }
     }
   }
@@ -288,7 +293,20 @@ export default function VideoMeetComponent() {
       secure: false
     })//client ko Socket.IO server se connect karta hai.
 
-    let addMessage = () => {
+    let addMessage = (data, sender, socketIdSender) => {
+      //bacend se jab bhi chat_message event aayega tab  ye function
+      //  chalega aur message ko state mein add karega.
+      setMessages((prevMessages) =>
+        [...prevMessages,
+        {
+          sender: sender,
+          data: data
+        }
+        ]);
+      //Agar sender ka socketId mere socketId ke equal nahi hai, to newMessages ko increment karo.
+      if (socketIdSender !== socketIdRef.current) {
+        setNewMessages((prevCount) => prevCount + 1);
+      }
 
     }
     //note:New user (a456) ne existing user (b456) ko signal bheja.
@@ -420,15 +438,15 @@ export default function VideoMeetComponent() {
     for (const id in connection) {
       if (id === socketIdRef.current) continue;
       connection[id].addStream(window.localStream);
-      connection[id].createOffer().then((description)=>{
+      connection[id].createOffer().then((description) => {
 
         connection[id].setLocalDescription(description)
-        .then(() => {
-          socketRef.current.emit("signal", id, JSON.stringify({
-            "sdp": connection[id].localDescription
-          }))
-        })
-        .catch(e => console.log(e))
+          .then(() => {
+            socketRef.current.emit("signal", id, JSON.stringify({
+              "sdp": connection[id].localDescription
+            }))
+          })
+          .catch(e => console.log(e))
       })
     }
     // Stream ke har track ke end hone par ye function chalega
@@ -471,6 +489,26 @@ export default function VideoMeetComponent() {
   let handleScreen = () => {
     setScreen(!screen);
   }
+  let sendMessage = () => {
+    socketRef.current.emit("chat_message", message, username);
+    setMessage("");
+  }
+
+  let handleKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      sendMessage();
+    }
+  }
+  let handleEndCall = () => {
+    try {
+      // Current local stream ke saare tracks stop karo
+      let tracks = localVideoRef.current.srcObject.getTracks()
+      tracks.forEach(track => track.stop())
+    } catch (error) {
+      console.log(error);
+    }
+    routeTo("/home"); // Navigate to home page or handle error appropriately
+  };
 
   return (
     <div>
@@ -485,11 +523,45 @@ export default function VideoMeetComponent() {
             </div>
           </div> :
           <div className={styles.meetVideoContainer}>
+
+            {showModal ?
+              <div className={styles.chatRoom}>
+                <div className={styles.chatContainer}>
+                  <h2>chat</h2>
+                  <div className={styles.chattingDisplay}>
+                    {
+                      messages.length === 0 ? <p>No messages yet</p> :
+                        messages.map((item, index) => {
+                          return (
+                            <div key={index} className={styles.chatMessage}>
+                              <p><strong>{item.sender}:</strong> {item.data}</p>
+                            </div>
+                          )
+                        }
+                        )
+                    }
+                  </div>
+                  <div className={styles.chattingArea}>
+                    <TextField
+                      id="outlined-basic"
+                      label="Enter in chat"
+                      variant="outlined"
+                      value={message}
+                      onChange={e => setMessage(e.target.value)}
+                    />
+                    <Button variant="contained" color="primary" onClick={sendMessage}>
+                      send
+                    </Button>
+                  </div>
+                </div>
+
+              </div> : <></>}
             <div className={styles.buttonContainers}>
               <IconButton sx={{ color: "white" }} onClick={handleVideo}>
                 {video === true ? <VideocamIcon /> : <VideocamOffIcon />}
               </IconButton>
-              <IconButton sx={{ color: "red" }}>
+              <IconButton sx={{ color: "red" }}
+                onClick={handleEndCall}>
                 <CallEndIcon />
               </IconButton>
               <IconButton sx={{ color: "white" }} onClick={handleAudio}>
@@ -502,7 +574,7 @@ export default function VideoMeetComponent() {
                   </IconButton> : <></>
               }
               <Badge badgeContent={newMessages} color='secondary' max={999} >
-                <IconButton sx={{ color: "white" }}>
+                <IconButton sx={{ color: "white" }} onClick={() => setShowModal(!showModal)}>
                   <ChatIcon />
                 </IconButton>
               </Badge>
