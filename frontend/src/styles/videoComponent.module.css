@@ -3,9 +3,10 @@
     height: 100vh;
     background: rgb(1, 4, 48);
 }
+
 .meetUserVideo {
     position: absolute;
-    bottom:10vh;
+    bottom: 10vh;
     height: 20vh;
     width: auto;
     left: 0;
@@ -13,27 +14,33 @@
 
 
 }
-.buttonContainers{
-position: absolute;
-width: 100vh;
-bottom: 0;
-text-align: center;
+
+.buttonContainers {
+    position: absolute;
+    width: 100vh;
+    bottom: 0;
+    text-align: center;
 }
-.buttonContainers  svg{
-font-size: 2rem;
+
+.buttonContainers svg {
+    font-size: 2rem;
 }
-.conferenceView{
+
+.conferenceView {
     display: flex;
     padding: 10px;
     gap: 10px;
+    flex-wrap: wrap;
 }
-.conferenceView video{
+
+.conferenceView video {
     width: 40vw;
     height: 30vh;
     min-width: 30vw;
     border-radius: 10px;
 }
-.chatRoom{
+
+.chatRoom {
     position: absolute;
     right: 0;
     width: 30vw;
@@ -42,21 +49,24 @@ font-size: 2rem;
     border-radius: 10px;
     padding-inline: 20px;
 }
-.chatContainer{
+
+.chatContainer {
     position: relative;
     height: 100%;
 }
-.chattingArea{
+
+.chattingArea {
     position: absolute;
     bottom: 0;
 }
-.chatmessage{
+
+.chatmessage {
     margin: 10px 0;
 }
 
 
 .historyBackButton {
-    position:  sticky !important;
+    position: sticky !important;
     top: 10px;
     z-index: 1000;
 
@@ -77,7 +87,7 @@ font-size: 2rem;
     box-shadow: 0 4px 12px rgba(242, 96, 96, 0.08);
     cursor: pointer;
     width: fit-content;
-    height:max-content;
+    height: max-content;
 
     transition: all 0.2s ease;
 }
@@ -87,3 +97,61 @@ font-size: 2rem;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
+.usernamePage {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem;
+    padding: 20px;
+    box-sizing: border-box;
+    margin-top: 10vh;
+
+}
+
+.logo {
+    position: absolute;
+    top: 20px;
+    left: 24px;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+    color: #0F766E;
+    font-family: cursive;
+    font-weight: bolder;
+    font-size: larger;
+}
+
+.logo img {
+    width: 42px;
+    height: 42px;
+    filter: grayscale(1) brightness(0.65);
+}
+
+@media (max-width: 768px) {
+    .usernamePage {
+        padding-inline: 1rem;
+        margin-top: 10vh;
+        align-items: start;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 1rem;
+    }
+}
+
+.usernamePage h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    font-size: 20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.cameraPreview video {
+    width: 320px;
+    max-width: 90vw;
+    border-radius: 12px;
+    object-fit: cover;
+    aspect-ratio: 16 / 9;
+}

@@ -51,7 +51,7 @@ export default function VideoMeetComponent() {
 
   // Chat
   let [message, setMessage] = useState("");       // Current message
-  let [newMessages, setNewMessages] = useState(3); // New message count
+  let [newMessages, setNewMessages] = useState(0); // New message count
   let [messages, setMessages] = useState([]);   // All messages
 
 
@@ -513,14 +513,23 @@ export default function VideoMeetComponent() {
     <div>
       {
         askForUsername === true ?
-          <div>
-            <h2>Enter into lobby</h2>
-            <TextField id="outlined-basic" label="Username" value={username} onChange={e => setUsername(e.target.value)} variant="outlined" />
-            <Button variant="contained" onClick={connect}>Connect</Button>
-            <div>
-              <video ref={localVideoRef} autoPlay muted> </video>
+          <>
+            <div className={styles.logo}>
+              <img
+                src="/video_logo.png"
+                alt="MeetSpace Logo"
+              />
+              <span>MeetSpace</span>
             </div>
-          </div> :
+            <div className={styles.usernamePage}>
+              <h2>Enter into lobby</h2>
+              <TextField id="outlined-basic" sx={{ borderColor: "white" }} label="Username" value={username} onChange={e => setUsername(e.target.value)} variant="outlined" />
+              <Button variant="contained" onClick={connect}>Connect</Button>
+              <div className={styles.cameraPreview}>
+                <video ref={localVideoRef} autoPlay muted> </video>
+              </div>
+            </div>
+          </> :
           <div className={styles.meetVideoContainer}>
 
             {showModal ?
