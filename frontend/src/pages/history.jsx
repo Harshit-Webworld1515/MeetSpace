@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useContext, useState } from 'react';
 import HomeIcon from '@mui/icons-material/Home';
 import IconButton from '@mui/material/IconButton';
+import styles from "../styles/videoComponent.module.css";
 
 
 
@@ -34,11 +35,22 @@ export default function History() {
     return (
         <div>
 
-            <IconButton onClick={() => {
-                routeTo("/home")
-            }}>
-                <HomeIcon />
-            </IconButton>
+<IconButton
+    onClick={() => {
+        routeTo("/home");
+    }}
+    className={styles.historyBackButton}
+>
+    <HomeIcon />
+    <h2 style={{
+        fontSize: "16px",
+        fontWeight: 600,
+        margin: 0
+    }}>
+        Back to Home
+    </h2>
+</IconButton>
+
 
             {meetings.map((e, i) => {
 
