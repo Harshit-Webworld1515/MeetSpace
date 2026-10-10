@@ -5,7 +5,7 @@ import { Button, IconButton, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom'
 import RestoreIcon from '@mui/icons-material/Restore';
 import '../App.css'
-import {AuthContext} from "../contexts/AuthContext.jsx"
+import { AuthContext } from "../contexts/AuthContext.jsx"
 
 
 function HomeComponent() {
@@ -15,7 +15,7 @@ function HomeComponent() {
 
     const { getHistoryOfUser, addToUserHistory } = React.useContext(AuthContext);
     let handleJoinVideoCall = async () => {
-       await addToUserHistory(meetingCode);
+        await addToUserHistory(meetingCode);
         navigate(`/${meetingCode}`)
     }
     return (
@@ -44,19 +44,18 @@ function HomeComponent() {
                 <div className="leftPanel">
                     <div>
                         <h2>Join Video Call and enjoy seamless communication</h2>
-                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                            <TextField
-                                label="Enter Meeting Code"
-                                value={meetingCode}
-                                onChange={(e) => setMeetingCode(e.target.value)}
-                            />
-                            <Button variant="contained" onClick={handleJoinVideoCall}>Join</Button>
-                        </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <TextField
+                            label="Enter Meeting Code"
+                            value={meetingCode}
+                            onChange={(e) => setMeetingCode(e.target.value)}
+                        />
+                        <Button variant="contained" onClick={handleJoinVideoCall}>Join</Button>
                     </div>
                 </div>
                 <div className="rightPanel">
                     <img alt="logo" srcSet="/logo3.png" />
-
                 </div>
             </div>
         </>
