@@ -6,20 +6,29 @@
 
 .meetUserVideo {
     position: absolute;
-    bottom: 10vh;
-    height: 20vh;
-    width: auto;
-    left: 0;
-    border-radius: 20px;
+    bottom: 12vh;
+    left: 12px;
+    width: 300px;
+    max-width: 40vw;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 12px;
 
 
 }
 
 .buttonContainers {
     position: absolute;
-    width: 100vh;
-    bottom: 0;
+    bottom: 20px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
     text-align: center;
+    z-index: 10;
 }
 
 .buttonContainers svg {
@@ -28,26 +37,36 @@
 
 .conferenceView {
     display: flex;
-    padding: 10px;
-    gap: 10px;
     flex-wrap: wrap;
+    justify-content: center;
+    align-content: flex-start;
+    gap: 12px;
+    padding: 16px;
+    padding-bottom: 100px;
+    box-sizing: border-box;
 }
 
 .conferenceView video {
-    width: 40vw;
-    height: 30vh;
-    min-width: 30vw;
-    border-radius: 10px;
+    width: 60%;
+    max-width: 640px;
+    aspect-ratio: 16 / 9;
+    height: auto;
+    object-fit: cover;
+    border-radius: 12px;
 }
 
 .chatRoom {
     position: absolute;
-    right: 0;
+    top: 10px;
+    right: 10px;
     width: 30vw;
-    height: 90vh;
+    max-width: 400px;
+    height: calc(100vh - 20px);
     background-color: white;
     border-radius: 10px;
-    padding-inline: 20px;
+    padding: 16px;
+    box-sizing: border-box;
+    z-index: 20;
 }
 
 .chatContainer {
@@ -64,6 +83,41 @@
     margin: 10px 0;
 }
 
+@media (max-width: 768px) {
+    .conferenceView video {
+        margin-top: 2rem;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    /* Tumhari local video */
+    .meetUserVideo {
+        width: 250px;
+        max-width: 45vw;
+        bottom: 14vh;
+    }
+
+    /* Chat poori screen cover nahi karegi */
+    .chatRoom {
+        top: 10px;
+        right: 10px;
+        width: 75%;
+        max-width: 320px;
+        height: 65vh;
+        padding: 12px;
+        z-index: 20;
+    }
+
+    /* Call buttons */
+    .buttonContainers {
+        gap: 12px;
+        bottom: 10px;
+    }
+
+    .buttonContainers svg {
+        font-size: 1.5rem;
+    }
+}
 
 .historyBackButton {
     position: sticky !important;
