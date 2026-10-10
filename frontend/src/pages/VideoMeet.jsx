@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Badge, IconButton, Button, TextField } from '@mui/material';
 import VideocamIcon from '@mui/icons-material/Videocam';
 import VideocamOffIcon from '@mui/icons-material/VideocamOff'
@@ -11,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 
 import StopScreenShareIcon from '@mui/icons-material/StopScreenShare'
 
-import { Await } from 'react-router-dom';
 import io from "socket.io-client";
 import styles from "../styles/videoComponent.module.css";
 

@@ -53,3 +53,37 @@ font-size: 2rem;
 .chatmessage{
     margin: 10px 0;
 }
+
+
+.historyBackButton {
+    position:  sticky !important;
+    top: 10px;
+    z-index: 1000;
+
+
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    padding: 10px 18px;
+    margin: 10px;
+
+    background-color: #fff9fe !important;
+    color: #5597f3 !important;
+
+    border: 1px solid #e5e7eb;
+    /* border-radius: 12px; */
+
+    box-shadow: 0 4px 12px rgba(242, 96, 96, 0.08);
+    cursor: pointer;
+    width: fit-content;
+    height:max-content;
+
+    transition: all 0.2s ease;
+}
+
+.historyBackButton:hover {
+    background-color: #f3f4f6 !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+

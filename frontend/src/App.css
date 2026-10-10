@@ -1,84 +1,74 @@
-.landingPageContainer {
-    width: 100vw;
-    height: 100vh;
-    background: url(../public/background.png) no-repeat;
-    background-size: cover;
-    color: white;
-}
 
-.landingPageContainer nav {
-    padding-inline: 1.2rem;
-    padding-block: 1.6rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
 
-.landingPageContainer nav h2 {
-    font-size: 1.8rem;
-    font-weight: 500;
-}
-
-.landingPageContainer nav .navlist {
-    display: flex;
-    gap: 1.6rem;
-    cursor: pointer;
-
-}
-
-.landingMainContainer {
-    display: flex;
-    justify-content: space-between;
-    padding-inline: 3rem;
-    /* padding-top: 20vh; */
-    height: 70vh;
-    align-items: center;
-}
-
-.landingMainContainer div:nth-child(2) img {
-    height: 70vh;
-    width: auto;
-}
-
-.landingMainContainer>div:nth-child(1) div[role='button'] {
-    background: #D97500;
-    width: fit-content;
-    padding:1rem;
-    border-radius: 20px;
-    margin-top: 1rem;
-}
-
-.landingMainContainer>div:nth-child(1) div[role='button'] a {
-    text-decoration: none;
-    color: white;
-    font-size: 1.2rem;
-}
 .navBar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-inline: 20px;
-  text-align: center;
+    display: flex;
+    margin-top: 1%;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: 20px;
+    text-align: center;
 }
+
 .meetContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 90vh;
 }
+
 .leftPanel {
-  width: 50%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+    margin-top: 2vh;
+    width: 55%;
+    height: 20%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
+
+
 .rightPanel {
-  width: 50%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    width: 45%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-top: 1rem;
+}
+
+.rightPanel>img {
+    width:110%;
+    height:auto;
+    border-radius: 20px;
+    
+}
+
+@media (max-width: 768px) {
+    .leftPanel>div:nth-child(2) {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .leftPanel {
+        padding-top: 5rem;
+        height: 70%;
+    }
+     .meetContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 60%;
+    }
+     .rightPanel {
+        width: 100%;
+        height: auto;
+        margin-top: 2rem;
+    }
+
+    .rightPanel img {
+        width: 80%;
+    }
 }
