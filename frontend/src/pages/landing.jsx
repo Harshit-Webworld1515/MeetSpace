@@ -1,4 +1,4 @@
-import '../app.css'
+import '../App.css'
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../styles/landing.module.css";
 import LoginIcon from '@mui/icons-material/Login';
