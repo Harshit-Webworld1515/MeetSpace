@@ -13,9 +13,10 @@ import StopScreenShareIcon from '@mui/icons-material/StopScreenShare'
 
 import io from "socket.io-client";
 import styles from "../styles/videoComponent.module.css";
+import server from '../envoirment';
 
 
-const server_url = "http://localhost:8080";
+const server_url = server;
 
 var connection = {}
 const peerConfigConnections = {
