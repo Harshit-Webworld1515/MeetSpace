@@ -88,6 +88,8 @@
         margin-top: 2rem;
         width: 100%;
         max-width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
     }
 
     /* Tumhari local video */
@@ -95,6 +97,8 @@
         width: 250px;
         max-width: 45vw;
         bottom: 14vh;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
     }
 
     /* Chat poori screen cover nahi karegi */
