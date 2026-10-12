@@ -8,6 +8,12 @@
   A full-stack video conferencing platform built for seamless audio, video, screen sharing, and real-time collaboration.
 </p>
 
+[🚀 **Live Demo — Try MeetSpace**](https://meetspacefrontend-8v0s.onrender.com)
+
+[💻 View Source Code](https://github.com/Harshit-Webworld1515/MeetSpace)
+
+---
+
 <p align="center">
   <a href="https://github.com/Harshit-Webworld1515/MeetSpace">
     <img src="https://img.shields.io/badge/PROJECT-MeetSpace-0D1117?style=for-the-badge&logo=webrtc&logoColor=34D399" alt="MeetSpace"/>
@@ -76,6 +82,34 @@ Rather than treating a video call as a simple UI feature, MeetSpace brings toget
 | Development | Git, GitHub, npm, Nodemon |
 
 ---
+## 📸 Screenshots
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/b5fb3700-4093-4d6a-9386-2c9b993aac34" width="78%" alt="MeetSpace desktop view"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/e6026629-e9a6-4c4f-bea2-48df7a1acc1e" width="22%" alt="MeetSpace mobile view"/>
+  &nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/460a6e34-634f-4683-8ef8-76c4c941945a" width="72%" alt="MeetSpace desktop view"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/fff70acc-c5f5-4d21-967f-b2a1a9e1829a" width="22%" alt="MeetSpace mobile view"/>
+  &nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/065f07c8-511a-4509-b569-3f018e079417" width="68%" alt="MeetSpace interface"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/6617f71c-1abb-4ecd-98f8-d6c0dd57c5e0" width="65%" alt="MeetSpace interface"/>
+  &nbsp;&nbsp;
+  <img src="https://github.com/user-attachments/assets/e49e65ec-eb2b-4257-887d-af0cd238bd34" width="20%" alt="MeetSpace mobile view"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/a0b37eaa-f66f-481d-8bbe-9a8be9ec3afe" width="78%" alt="MeetSpace additional desktop view"/>
+</p>
+
 
 ## 04 — Architecture
 
