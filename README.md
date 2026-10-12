@@ -100,14 +100,16 @@ Rather than treating a video call as a simple UI feature, MeetSpace brings toget
   <img src="https://github.com/user-attachments/assets/065f07c8-511a-4509-b569-3f018e079417" width="68%" alt="MeetSpace interface"/>
 </p>
 
+ 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/6617f71c-1abb-4ecd-98f8-d6c0dd57c5e0" width="65%" alt="MeetSpace interface"/>
-  &nbsp;&nbsp;
-  <img src="https://github.com/user-attachments/assets/e49e65ec-eb2b-4257-887d-af0cd238bd34" width="20%" alt="MeetSpace mobile view"/>
+  <img src="https://github.com/user-attachments/assets/a5a20ae3-2e57-4ccd-9d2e-12cc5fe83b9b" width="65%" alt="MeetSpace Desktop Interface" />
+  <img src="https://github.com/user-attachments/assets/e49e65ec-eb2b-4257-887d-af0cd238bd34" width="25%" alt="MeetSpace Mobile Interface" />
 </p>
+
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/a0b37eaa-f66f-481d-8bbe-9a8be9ec3afe" width="78%" alt="MeetSpace additional desktop view"/>
+  <img src="https://github.com/user-attachments/assets/26c6d8f2-cc16-4694-94ee-c496a653215d" width="20%" alt="MeetSpace mobile view"/>
 </p>
 
 
